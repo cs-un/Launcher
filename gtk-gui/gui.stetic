@@ -97,8 +97,7 @@ Test</property>
                     <property name="ShowScrollbars">True</property>
                     <property name="Editable">False</property>
                     <property name="CursorVisible">False</property>
-                    <property name="Text" translatable="yes">test
-test2</property>
+                    <property name="Text" translatable="yes" />
                     <property name="WrapMode">WordChar</property>
                   </widget>
                 </child>
@@ -114,6 +113,7 @@ test2</property>
                 <property name="WidthRequest">150</property>
                 <property name="HeightRequest">150</property>
                 <property name="CanFocus">True</property>
+                <property name="Events">ButtonReleaseMask</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Launch</property>
                 <property name="UseUnderline">True</property>

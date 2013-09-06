@@ -1,0 +1,4 @@
+#!/bin/bash
+sleep 2
+unzip -o new.zip
+exec ./Launcher.exe

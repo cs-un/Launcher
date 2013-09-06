@@ -77,7 +77,6 @@ public partial class MainWindow
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 		this.Log = new global::Gtk.TextView ();
-		this.Log.Buffer.Text = "test\ntest2";
 		this.Log.WidthRequest = 440;
 		this.Log.HeightRequest = 300;
 		this.Log.CanFocus = true;
@@ -95,6 +94,7 @@ public partial class MainWindow
 		this.LaunchButton.WidthRequest = 150;
 		this.LaunchButton.HeightRequest = 150;
 		this.LaunchButton.CanFocus = true;
+		this.LaunchButton.Events = ((global::Gdk.EventMask)(512));
 		this.LaunchButton.Name = "LaunchButton";
 		this.LaunchButton.UseUnderline = true;
 		this.LaunchButton.Label = global::Mono.Unix.Catalog.GetString ("Launch");
