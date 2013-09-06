@@ -9,6 +9,7 @@ public partial class MainWindow: Gtk.Window
 	private bool firstRun = true;
 	private bool startThread = false;
 	private bool updateGame = false;
+	private bool updateLauncher = false;
 	private Thread thread;
 	private Thread time;
 	private WebClient wc;
@@ -80,14 +81,13 @@ public partial class MainWindow: Gtk.Window
 	    String url = "http://www.nada.kth.se/~csundlof/" + version + ".zip";
 		Uri uri = new Uri(url);
 		Log.Buffer.Text = "Downloading new version of the Launcher..\n" + Log.Buffer.Text;
-		
         wc.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
-		
 		wc.DownloadFileAsync(uri, "new.zip");
-		Log.Buffer.Text = "File was succesfully downloaded, applying patch in 5 seconds..\n" + Log.Buffer.Text;
-		Thread.Sleep(5000);
-		System.Diagnostics.Process.Start("./patchLinuxLauncher");
-		Application.Quit ();
+		updateLauncher = true;
+
+	}
+	
+	private void DownloadFileCallback2(object sender, DownloadDataCompletedEventArgs e){
 	}
 	
 	private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
@@ -100,5 +100,12 @@ public partial class MainWindow: Gtk.Window
 	        e.ProgressPercentage);
 	    DownloadProgress.Fraction = e.ProgressPercentage/100;
 		DownloadProgress.Text = "Downloading update " + e.ProgressPercentage.ToString () + "% " + (float)e.BytesReceived/1048576 +"/" + (float)e.TotalBytesToReceive/1048576 + " MB";;
+		if(e.ProgressPercentage==100 && updateLauncher)
+		{
+			Log.Buffer.Text = "File was succesfully downloaded, applying patch in 5 seconds..\n" + Log.Buffer.Text;
+			Thread.Sleep(5000);
+			System.Diagnostics.Process.Start("./patchLinuxLauncher");
+			Application.Quit ();
+		}
 	}
 }
