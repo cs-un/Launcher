@@ -123,6 +123,16 @@ test2</property>
                 <property name="Y">204</property>
               </packing>
             </child>
+            <child>
+              <widget class="Gtk.Label" id="Timer">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">0</property>
+              </widget>
+              <packing>
+                <property name="X">489</property>
+                <property name="Y">18</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">1</property>

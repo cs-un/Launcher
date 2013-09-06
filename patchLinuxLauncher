@@ -1,0 +1,3 @@
+#!/bin/bash
+unzip new.zip
+exec ./Launcher.exe

@@ -12,6 +12,7 @@ public partial class MainWindow
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
 	private global::Gtk.TextView Log;
 	private global::Gtk.Button LaunchButton;
+	private global::Gtk.Label Timer;
 	
 	protected virtual void Build ()
 	{
@@ -101,9 +102,17 @@ public partial class MainWindow
 		global::Gtk.Fixed.FixedChild w7 = ((global::Gtk.Fixed.FixedChild)(this.fixed92 [this.LaunchButton]));
 		w7.X = 497;
 		w7.Y = 204;
+		// Container child fixed92.Gtk.Fixed+FixedChild
+		this.Timer = new global::Gtk.Label ();
+		this.Timer.Name = "Timer";
+		this.Timer.LabelProp = global::Mono.Unix.Catalog.GetString ("0");
+		this.fixed92.Add (this.Timer);
+		global::Gtk.Fixed.FixedChild w8 = ((global::Gtk.Fixed.FixedChild)(this.fixed92 [this.Timer]));
+		w8.X = 489;
+		w8.Y = 18;
 		this.vbox1.Add (this.fixed92);
-		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.fixed92]));
-		w8.Position = 1;
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.fixed92]));
+		w9.Position = 1;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
