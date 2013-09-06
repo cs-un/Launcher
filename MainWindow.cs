@@ -87,8 +87,7 @@ public partial class MainWindow: Gtk.Window
 
 	}
 	
-	private void DownloadFileCallback2(object sender, DownloadDataCompletedEventArgs e){
-	}
+
 	
 	private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
 	{
