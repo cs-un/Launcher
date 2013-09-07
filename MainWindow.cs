@@ -19,6 +19,7 @@ public partial class MainWindow: Gtk.Window
 	private Thread thread;
 	private Thread time;
 	private WebClient wc;
+	private int updateProgress = 0;
 	private List<string> installed = new List<string>();
 	private List<float> versions = new List<float>();
 	private string[] applications = new string[5];
@@ -51,12 +52,14 @@ public partial class MainWindow: Gtk.Window
 		}
 		time = new Thread(timer);
 		time.IsBackground =  true;
-		time.Start();
+		//time.Start();
 	}
 	
 	private void timer(){
 		while(true){
+			Gtk.Application.Invoke (delegate {
 			Timer.Text = Convert.ToInt32(Timer.Text) + 1 + "";
+			});
 			Thread.Sleep(1000);
 		}
 	}
@@ -64,21 +67,27 @@ public partial class MainWindow: Gtk.Window
 	private void CheckLauncherVersion(){
 		wc = new WebClient();
 		string url = website + "version.txt"; 
+		Gtk.Application.Invoke (delegate {
 		Log.Buffer.Text = "Checking for updates to the Launcher..\n" + Log.Buffer.Text;
 		DownloadProgress.Fraction = 0.50;
 	    DownloadProgress.Text = (DownloadProgress.Fraction * 100).ToString() + "%";
+		});
 		try{
 			byte[] content = wc.DownloadData(url);
 			string version = System.Text.Encoding.Default.GetString(content);
 			if(float.Parse(version)>float.Parse(LauncherVersion)){
-	    		DownloadProgress.Text = "Found a new version of the Launcher(v" + version + ")";
-				Log.Buffer.Text = "A new version of the Launcher was found(v" + version + ")!\n" + Log.Buffer.Text;
+				Gtk.Application.Invoke (delegate {
+	    			DownloadProgress.Text = "Found a new version of the Launcher(v" + version + ")";
+					Log.Buffer.Text = "A new version of the Launcher was found(v" + version + ")!\n" + Log.Buffer.Text;
+				});
 				DownloadLauncher(float.Parse(version));
 			}
 			if(float.Parse(version)==float.Parse(LauncherVersion)){
-				DownloadProgress.Fraction = 1.00;
-				DownloadProgress.Text = "Your Launcher is up to date";
-				Log.Buffer.Text = "Your Launcher is up to date\n" + Log.Buffer.Text;
+				Gtk.Application.Invoke (delegate {
+					DownloadProgress.Fraction = 1.00;
+					DownloadProgress.Text = "Your Launcher is up to date";
+					Log.Buffer.Text = "Your Launcher is up to date\n" + Log.Buffer.Text;
+				});
 				Thread.Sleep(1000);
 				if(installed.Contains(SelectedGame.ActiveText))
 					CheckGameVersion();
@@ -87,9 +96,11 @@ public partial class MainWindow: Gtk.Window
 			}
 		}
 		catch{
+			Gtk.Application.Invoke (delegate {
 			Log.Buffer.Text = "Could not check for the latest version online, are you connected to the internet?\n" + Log.Buffer.Text;
 			DownloadProgress.Text = "An error occurred.";
 			DownloadProgress.Fraction = 1.00;
+			});
 		}
 		//if((float)LauncherVersion<(float)content)
 			// code to download and update launcher
@@ -98,7 +109,9 @@ public partial class MainWindow: Gtk.Window
 	private void DownloadLauncher(float version){
 	    String url = website + version + ".zip";
 		Uri uri = new Uri(url);
-		Log.Buffer.Text = "Downloading new version of the Launcher..\n" + Log.Buffer.Text;
+		Gtk.Application.Invoke (delegate {
+			Log.Buffer.Text = "Downloading new version of the Launcher..\n" + Log.Buffer.Text;
+		});
         wc.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
 		updateLauncher = true;
 		wc.DownloadFileAsync(uri, "new.zip");
@@ -109,38 +122,48 @@ public partial class MainWindow: Gtk.Window
 	private void CheckGameVersion()
 	{
 		string url = website + SelectedGame.ActiveText + "/version.txt";
-		DownloadProgress.Fraction = 0.00;
+		int vIndex = installed.IndexOf(SelectedGame.ActiveText);
+		Gtk.Application.Invoke (delegate {
+			DownloadProgress.Fraction = 0.00;
 			DownloadProgress.Text = "Checking for updates to " + SelectedGame.ActiveText;
-			int vIndex = installed.IndexOf(SelectedGame.ActiveText);
 			Log.Buffer.Text = "Current version of application " + SelectedGame.ActiveText + " is " + versions[vIndex] + " ..\n" + Log.Buffer.Text; // ska sedan läsa versionen från spelets mapp
 			Log.Buffer.Text = "Checking for updates to " + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
+		});
 			try{
 				byte[] content = wc.DownloadData(url);
 				string version = System.Text.Encoding.Default.GetString(content);
 				if(float.Parse(version)>versions[vIndex]){
-			    	DownloadProgress.Text = "Found a new version of the selected application(v" + version + ")";
-					Log.Buffer.Text = "A new version of " + SelectedGame.ActiveText + " was found(v" + version + ")!\n" + Log.Buffer.Text;
+					Gtk.Application.Invoke (delegate {
+			    		DownloadProgress.Text = "Found a new version of the selected application(v" + version + ")";
+						Log.Buffer.Text = "A new version of " + SelectedGame.ActiveText + " was found(v" + version + ")!\n" + Log.Buffer.Text;
+					});
 					DownloadGame(float.Parse(version));
 				}
 				if(float.Parse(version)==versions[vIndex]){
-					DownloadProgress.Fraction = 1.00;
-					DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
-					Log.Buffer.Text = SelectedGame.ActiveText + " is up to date\n" + Log.Buffer.Text;
-					LaunchButton.Sensitive = true;
+					Gtk.Application.Invoke (delegate {
+						DownloadProgress.Fraction = 1.00;
+						DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
+						Log.Buffer.Text = SelectedGame.ActiveText + " is up to date\n" + Log.Buffer.Text;
+						LaunchButton.Sensitive = true;
+					});
 				}
 			}
 			catch{
-				Log.Buffer.Text = "Could not check for the latest version online, are you connected to the internet?\n" + Log.Buffer.Text;
-				DownloadProgress.Text = "An error occurred.";
-				DownloadProgress.Fraction = 1.00;
+				Gtk.Application.Invoke (delegate {
+					Log.Buffer.Text = "Could not check for the latest version online, are you connected to the internet?\n" + Log.Buffer.Text;
+					DownloadProgress.Text = "An error occurred.";
+					DownloadProgress.Fraction = 1.00;
+				});
 			}
 		
 	}
 	
 	private void DownloadGame(float version){
-	    String url = website + version + ".zip";
+	    String url = website + SelectedGame.ActiveText + "/" + version + ".zip";
 		Uri uri = new Uri(url);
+		Gtk.Application.Invoke (delegate {
 		Log.Buffer.Text = "Downloading new version of" + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
+		});
         wc.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
 		updateGame = true;
 		wc.DownloadFileAsync(uri, "./" + SelectedGame.ActiveText + "/new.zip");
@@ -148,16 +171,20 @@ public partial class MainWindow: Gtk.Window
 	
 	private void updateGameFiles()
 	{
-		Log.Buffer.Text = "File was succesfully downloaded, unpacking files..\n" + Log.Buffer.Text;
-		DownloadProgress.Text = "Unpacking files";
+		Gtk.Application.Invoke (delegate {
+			Log.Buffer.Text = "File was succesfully downloaded, unpacking files..\n" + Log.Buffer.Text;
+			DownloadProgress.Text = "Unpacking files";
+		});
 		Process p = new Process();
 		ProcessStartInfo startInfo = new ProcessStartInfo();
 		startInfo.FileName = "Scripts/Linux/patchLinuxGame";
 		startInfo.Arguments = SelectedGame.ActiveText;
 		p = Process.Start(startInfo);
 		p.WaitForExit();
-		DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
-		Log.Buffer.Text = SelectedGame.ActiveText + "was successfully updated\n" + Log.Buffer.Text;
+		Gtk.Application.Invoke (delegate {
+			DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
+			Log.Buffer.Text = SelectedGame.ActiveText + "was successfully updated\n" + Log.Buffer.Text;
+		});
 		LaunchButton.Sensitive = true;
 	}
 	#endregion
@@ -198,11 +225,19 @@ public partial class MainWindow: Gtk.Window
 	        e.BytesReceived, 
 	        e.TotalBytesToReceive,
 	        e.ProgressPercentage);
-	    DownloadProgress.Fraction = e.ProgressPercentage/100;
-		DownloadProgress.Text = "Downloading data " + e.ProgressPercentage.ToString () + "% " + (float)e.BytesReceived/1048576 +"/" + (float)e.TotalBytesToReceive/1048576 + " MB";;
+		if(updateProgress%200==0){
+			Gtk.Application.Invoke (delegate {
+	    		DownloadProgress.Fraction = e.ProgressPercentage/100;
+				DownloadProgress.Text = "Downloading data " + e.ProgressPercentage.ToString () + "% " + (float)e.BytesReceived/1048576 +"/" + (float)e.TotalBytesToReceive/1048576 + " MB";
+			});
+		}
+		else
+			updateProgress++;
 		if(e.ProgressPercentage==100 && updateLauncher)
 		{
-			Log.Buffer.Text = "File was succesfully downloaded, applying patch in 5 seconds..\n" + Log.Buffer.Text;
+			Gtk.Application.Invoke (delegate {
+				Log.Buffer.Text = "File was succesfully downloaded, applying patch in 5 seconds..\n" + Log.Buffer.Text;
+			});
 			Thread.Sleep(5000);
 			Process.Start("Scripts/Linux/patchLinuxLauncher");
 			Application.Quit ();
@@ -210,6 +245,7 @@ public partial class MainWindow: Gtk.Window
 		
 		if(e.ProgressPercentage==100 && updateGame)
 		{
+			updateProgress = 0;
 			thread = new Thread(updateGameFiles);
 			thread.Start ();
 			//mer

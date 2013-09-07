@@ -83,6 +83,7 @@ public partial class MainWindow
 		this.Log.Name = "Log";
 		this.Log.Editable = false;
 		this.Log.CursorVisible = false;
+		this.Log.AcceptsTab = false;
 		this.Log.WrapMode = ((global::Gtk.WrapMode)(3));
 		this.GtkScrolledWindow.Add (this.Log);
 		this.fixed92.Add (this.GtkScrolledWindow);
