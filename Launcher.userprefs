@@ -3,11 +3,10 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="gtk-gui/MainWindow.cs">
     <Files>
       <File FileName="Main.cs" Line="3" Column="1" />
-      <File FileName="MainWindow.cs" Line="145" Column="21" />
+      <File FileName="MainWindow.cs" Line="247" Column="79" />
       <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
-      <File FileName="gtk-gui/MainWindow.cs" Line="109" Column="33" />
+      <File FileName="gtk-gui/MainWindow.cs" Line="87" Column="51" />
       <File FileName="ProcessName.cs" Line="23" Column="12" />
-      <File FileName="Applications.cs" Line="12" Column="1" />
       <File FileName="Scripts/Linux/patchLinuxGame" Line="1" Column="1" />
       <File FileName="Scripts/Linux/patchLinuxLauncher" Line="1" Column="1" />
     </Files>

@@ -10,18 +10,19 @@ using System.Diagnostics;
 
 public partial class MainWindow: Gtk.Window
 {	
-	public static String LauncherVersion = "0.01";
+	public static String LauncherVersion = "0.00";
 	private bool firstRun = true;
 	private bool startThread = false;
 	private bool updateGame = false;
 	private bool updateLauncher = false;
 	private bool letInstall = false;
+	private bool letLaunch = false;
 	private Thread thread;
 	private Thread time;
 	private WebClient wc;
 	private int updateProgress = 0;
 	private List<string> installed = new List<string>();
-	private List<float> versions = new List<float>();
+	private List<Double> versions = new List<Double>();
 	private string[] applications = new string[5];
 	
 	private string website = "http://www.nada.kth.se/~csundlof/";
@@ -37,6 +38,7 @@ public partial class MainWindow: Gtk.Window
 		if(!installed.Contains(SelectedGame.ActiveText))
 		{
 			LaunchButton.Label = "Install " + SelectedGame.ActiveText;
+			letInstall = true;
 		}
 		else
 		{
@@ -45,6 +47,7 @@ public partial class MainWindow: Gtk.Window
 		if(firstRun){
 			thread = new Thread(CheckLauncherVersion);
 			thread.IsBackground = true;
+			DetectLauncherVersion();
 			Log.Buffer.Text = "Current version of the Launcher is " + LauncherVersion + ".\n" + Log.Buffer.Text;
 	    	DownloadProgress.Text = (DownloadProgress.Fraction * 100).ToString() + "%";
 			thread.Start();
@@ -102,8 +105,6 @@ public partial class MainWindow: Gtk.Window
 			DownloadProgress.Fraction = 1.00;
 			});
 		}
-		//if((float)LauncherVersion<(float)content)
-			// code to download and update launcher
 	}
 	
 	private void DownloadLauncher(float version){
@@ -126,25 +127,26 @@ public partial class MainWindow: Gtk.Window
 		Gtk.Application.Invoke (delegate {
 			DownloadProgress.Fraction = 0.00;
 			DownloadProgress.Text = "Checking for updates to " + SelectedGame.ActiveText;
-			Log.Buffer.Text = "Current version of application " + SelectedGame.ActiveText + " is " + versions[vIndex] + " ..\n" + Log.Buffer.Text; // ska sedan läsa versionen från spelets mapp
+			Log.Buffer.Text = "Current version of application " + SelectedGame.ActiveText + " is " + versions[vIndex] + " ..\n" + Log.Buffer.Text;
 			Log.Buffer.Text = "Checking for updates to " + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
 		});
 			try{
 				byte[] content = wc.DownloadData(url);
 				string version = System.Text.Encoding.Default.GetString(content);
-				if(float.Parse(version)>versions[vIndex]){
+				if(Convert.ToDouble(version)>versions[vIndex]){
 					Gtk.Application.Invoke (delegate {
 			    		DownloadProgress.Text = "Found a new version of the selected application(v" + version + ")";
 						Log.Buffer.Text = "A new version of " + SelectedGame.ActiveText + " was found(v" + version + ")!\n" + Log.Buffer.Text;
 					});
 					DownloadGame(float.Parse(version));
 				}
-				if(float.Parse(version)==versions[vIndex]){
+				if(Convert.ToDouble(version)==versions[vIndex]){
 					Gtk.Application.Invoke (delegate {
 						DownloadProgress.Fraction = 1.00;
 						DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
 						Log.Buffer.Text = SelectedGame.ActiveText + " is up to date\n" + Log.Buffer.Text;
 						LaunchButton.Sensitive = true;
+						letLaunch = true;
 					});
 				}
 			}
@@ -186,6 +188,7 @@ public partial class MainWindow: Gtk.Window
 			Log.Buffer.Text = SelectedGame.ActiveText + "was successfully updated\n" + Log.Buffer.Text;
 		});
 		LaunchButton.Sensitive = true;
+		letLaunch = true;
 	}
 	#endregion
 	#region load data
@@ -195,10 +198,12 @@ public partial class MainWindow: Gtk.Window
 		Log.Buffer.Text = "Getting installed applications\n" + Log.Buffer.Text;
 		foreach(string s in applications)
 		{
-			string file = "./" + s + "/test.txt";
-			float v = 0.01f; // kommer i framtiden läsas in från fil
+			string file = "./" + s + "/version.txt";
 			if(File.Exists(file))
 			{
+				string[] ver = new string[5];
+				ver = File.ReadAllLines(file);
+				double v = Convert.ToDouble(ver[0]);
 				installed.Add(s);
 				Log.Buffer.Text = s + " v" + v + " installed.\n" + Log.Buffer.Text;
 				versions.Add(v);
@@ -206,6 +211,17 @@ public partial class MainWindow: Gtk.Window
 		}
 		if(installed.Count==0)
 			Log.Buffer.Text = "No installed applications found\n" + Log.Buffer.Text;
+	}
+	
+	private void DetectLauncherVersion()
+	{
+			string file = "./Lversion.txt";
+			if(File.Exists(file))
+			{
+				string[] ver = new string[5];
+				ver = File.ReadAllLines(file);
+				LauncherVersion = ver[0];
+			}
 	}
 	#endregion
 	#region events
