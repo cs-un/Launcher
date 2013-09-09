@@ -32,6 +32,7 @@ public partial class MainWindow: Gtk.Window
 		//System.Threading.Thread thread = new System.Threading.Thread(CheckLauncherVersion(main, Log));
 		Build ();
 		LaunchButton.Sensitive = false;
+		SelectedGame.Sensitive = false;
 		applications[0] = "Game1";
 		applications[1] = "test";
 		DetectInstalledApplications();
@@ -43,6 +44,7 @@ public partial class MainWindow: Gtk.Window
 		else
 		{
 			LaunchButton.Label = "Launch " + SelectedGame.ActiveText;
+			letLaunch = true;
 		}
 		if(firstRun){
 			thread = new Thread(CheckLauncherVersion);
@@ -53,6 +55,7 @@ public partial class MainWindow: Gtk.Window
 			thread.Start();
 			firstRun = false;
 		}
+		LaunchButton.Clicked += new EventHandler(LaunchButtonClicked);
 		time = new Thread(timer);
 		time.IsBackground =  true;
 		//time.Start();
@@ -94,8 +97,10 @@ public partial class MainWindow: Gtk.Window
 				Thread.Sleep(1000);
 				if(installed.Contains(SelectedGame.ActiveText))
 					CheckGameVersion();
-				else
+				else{
 					letInstall = true;
+					LaunchButton.Sensitive = true;
+				}
 			}
 		}
 		catch{
@@ -123,24 +128,35 @@ public partial class MainWindow: Gtk.Window
 	private void CheckGameVersion()
 	{
 		string url = website + SelectedGame.ActiveText + "/version.txt";
-		int vIndex = installed.IndexOf(SelectedGame.ActiveText);
-		Gtk.Application.Invoke (delegate {
-			DownloadProgress.Fraction = 0.00;
-			DownloadProgress.Text = "Checking for updates to " + SelectedGame.ActiveText;
-			Log.Buffer.Text = "Current version of application " + SelectedGame.ActiveText + " is " + versions[vIndex] + " ..\n" + Log.Buffer.Text;
-			Log.Buffer.Text = "Checking for updates to " + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
+		int vIndex = 0;
+		if(!letInstall){
+			vIndex = installed.IndexOf(SelectedGame.ActiveText);
+			Gtk.Application.Invoke (delegate {
+				DownloadProgress.Fraction = 0.00;
+				DownloadProgress.Text = "Checking for updates to " + SelectedGame.ActiveText;
+				Log.Buffer.Text = "Current version of application " + SelectedGame.ActiveText + " is " + versions[vIndex] + " ..\n" + Log.Buffer.Text;
+				Log.Buffer.Text = "Checking for updates to " + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
 		});
+		}
+		else
+		{
+			Gtk.Application.Invoke (delegate {
+				DownloadProgress.Fraction = 0.00;
+				DownloadProgress.Text = "Checking for latest version of " + SelectedGame.ActiveText;
+				Log.Buffer.Text = "Checking for latest version of " + SelectedGame.ActiveText + " ..\n" + Log.Buffer.Text;
+		});
+		}
 			try{
 				byte[] content = wc.DownloadData(url);
 				string version = System.Text.Encoding.Default.GetString(content);
-				if(Convert.ToDouble(version)>versions[vIndex]){
+				if(letInstall || Convert.ToDouble(version)>versions[vIndex]){
 					Gtk.Application.Invoke (delegate {
-			    		DownloadProgress.Text = "Found a new version of the selected application(v" + version + ")";
+				    	DownloadProgress.Text = "Found a new version of the selected application(v" + version + ")";
 						Log.Buffer.Text = "A new version of " + SelectedGame.ActiveText + " was found(v" + version + ")!\n" + Log.Buffer.Text;
 					});
-					DownloadGame(float.Parse(version));
+					DownloadGame(Convert.ToDouble(version));
 				}
-				if(Convert.ToDouble(version)==versions[vIndex]){
+				else if(Convert.ToDouble(version)==versions[vIndex]){
 					Gtk.Application.Invoke (delegate {
 						DownloadProgress.Fraction = 1.00;
 						DownloadProgress.Text = SelectedGame.ActiveText + " is up to date";
@@ -160,7 +176,7 @@ public partial class MainWindow: Gtk.Window
 		
 	}
 	
-	private void DownloadGame(float version){
+	private void DownloadGame(double version){
 	    String url = website + SelectedGame.ActiveText + "/" + version + ".zip";
 		Uri uri = new Uri(url);
 		Gtk.Application.Invoke (delegate {
@@ -225,6 +241,22 @@ public partial class MainWindow: Gtk.Window
 	}
 	#endregion
 	#region events
+	
+	private void LaunchButtonClicked (object sender, EventArgs a)
+	{
+		Gtk.Application.Invoke (delegate {
+			Log.Buffer.Text = "clicked\n" + Log.Buffer.Text;
+		});
+		if(letInstall){
+			string path = "./" + SelectedGame.ActiveText;
+			System.IO.Directory.CreateDirectory(path);
+			thread = new Thread(CheckGameVersion);
+			thread.IsBackground = true;
+			thread.Start();
+			LaunchButton.Sensitive = false;
+		}
+	}
+	
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		time.Abort();
