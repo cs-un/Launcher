@@ -1,0 +1,10 @@
+D:\Dropbox\GIT\Launcher\Launcher\obj\x86\Debug\Launcher.csprojResolveAssemblyReference.cache
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Scripts\Linux\patchLinuxLauncher
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Scripts\Linux\patchLinuxGame
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Launcher.exe
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Launcher.pdb
+D:\Dropbox\GIT\Launcher\Launcher\obj\x86\Debug\Launcher.exe
+D:\Dropbox\GIT\Launcher\Launcher\obj\x86\Debug\Launcher.pdb
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Ionic.Zip.dll
+D:\Dropbox\GIT\Launcher\Launcher\obj\x86\Debug\Launcher.g.resources
+D:\Dropbox\GIT\Launcher\Launcher\bin\Debug\Lversion.txt
