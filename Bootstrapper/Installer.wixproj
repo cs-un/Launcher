@@ -35,7 +35,7 @@
     <Content Include="EULA.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Launcher\MySetup\C_Launcher.wixproj">
+    <ProjectReference Include="..\MySetup\C_Launcher.wixproj">
       <Name>C_Launcher</Name>
       <Project>{a9f0f87d-57e0-4093-bb59-54cdff76d62a}</Project>
       <Private>True</Private>
