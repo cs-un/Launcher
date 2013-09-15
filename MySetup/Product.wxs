@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="C_Launcher" Language="1033" Version="1.0.0.0" Manufacturer="Claudius Corporation" UpgradeCode="6b30eb0c-bf15-4da1-9b34-c29f8e27a3e4">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="C_Launcher" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="C_Launcher" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<Component Id="ProductComponent">
+        <File Source="$(var.Launcher.TargetPath)"/>
+        <!-- <File Id="GTKSETUP" Source="runtime.msi"
+           Checksum="yes" Hidden="no"/>-->
+      </Component>
+      <Component Id="Component2">
+        <File Id="LVersion.txt" Source="$(var.Launcher.ProjectDir)\LVersion.txt" />
+      </Component>
+      <Component Id="Component3">
+        <File Id="Ionic.Zip.dll" Source="$(var.Launcher.ProjectDir)\Ionic.Zip.dll" />
+      </Component>
+		</ComponentGroup>
+    <!--<InstallExecuteSequence>
+      <Custom Action="InstallGtk" Before="InstallFinalize">
+        <![CDATA[NOT REMOVE AND NOT GTKINSTALLED]]>
+      </Custom>
+    </InstallExecuteSequence>
+    <CustomAction Id="InstallGtk" FileKey="GTKSETUP" ExeCommand=""
+Execute="deferred" Impersonate="no"
+      Return="ignore"/>
+    <Property Id="GTKINSTALLED">
+      <RegistrySearch Id="gtksearch" Key="SOFTWARE\Novell\Gtk-Sharp\1.0"
+Name="SdkInstallRoot" Root="HKLM" Type="raw"></RegistrySearch>
+    </Property> -->
+  </Fragment>
+</Wix>

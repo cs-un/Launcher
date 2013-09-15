@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Bundle Name="C_Launcher" Version="1.0.0.0" Manufacturer="Claudius" UpgradeCode="51f91449-f686-4e9c-839b-9c652da714c3">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
+    <WixVariable Id="WixUILicenseRtf" Value="EULA.rtf" />
+    <Chain>
+			<!-- TODO: Define the list of chained packages. -->
+			<MsiPackage SourceFile="runtime.msi" />
+      <MsiPackage SourceFile="$(var.C_Launcher.TargetPath)" />
+		</Chain>
+	</Bundle>
+</Wix>
