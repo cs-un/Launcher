@@ -33,6 +33,7 @@
   <ItemGroup>
     <Content Include="runtime.msi" />
     <Content Include="EULA.rtf" />
+    <Content Include="xnafx40_redist.msi" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MySetup\C_Launcher.wixproj">
